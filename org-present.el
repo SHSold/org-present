@@ -268,5 +268,16 @@
          (current-heading (org-present-trim-string safe-title-text)))
     (run-hook-with-args 'org-present-after-navigate-functions (buffer-name) current-heading)))
 
+(defun org-present-navigation-headline ()
+  "Create a navigation headline with org headings of level 1."
+  ;; this might be helpful
+  ;; (org-get-outline-path) yields the local tree structure,
+  ;; where local means every children in the local level 1
+  ;; if on first level it yields nil
+  ;;
+  ;; (org-map-entries function &optional) iterates over all headings
+  ;; and applies function on them
+  )
+
 (provide 'org-present)
 ;;; org-present.el ends here
