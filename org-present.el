@@ -220,12 +220,14 @@
 (defun org-present-hide-cursor ()
   "Hide the cursor for current window."
   (interactive)
-  (internal-show-cursor (selected-window) nil))
+  (internal-show-cursor (selected-window) nil)
+  (blink-cursor-suspend))
 
 (defun org-present-show-cursor ()
   "Show the cursor for current window."
   (interactive)
-  (internal-show-cursor (selected-window) t))
+  (internal-show-cursor (selected-window) t)
+  (blink-cursor--start-timer))
 
 ;;;###autoload
 (defun org-present ()
