@@ -220,24 +220,29 @@
 (defun org-present-hide-cursor ()
   "Hide the cursor for current window."
   (interactive)
-  (internal-show-cursor (selected-window) nil)
-  (blink-cursor-suspend))
+  (blink-cursor-suspend)  
+  (internal-show-cursor (selected-window) nil))
 
 (defun org-present-show-cursor ()
   "Show the cursor for current window."
   (interactive)
-  (internal-show-cursor (selected-window) t)
-  (blink-cursor--start-timer))
+  (blink-cursor--start-timer)
+  (internal-show-cursor (selected-window) t))
+
 
 ;;;###autoload
 (defun org-present ()
   "init."
   (interactive)
   (setq org-present-mode t)
+  (org-present-navigation-modeline)
   (org-present-add-overlays)
   (run-hooks 'org-present-mode-hook)
   (org-present-narrow)
-  (org-present-run-after-navigate-functions))
+  (org-present-run-after-navigate-functions)
+  (org-present-hide-cursor)
+  (org-present-hide-bars))
+
 
 (defun org-present-quit ()
   "Quit the minor-mode."
@@ -249,6 +254,9 @@
   (when buffer-read-only
     (org-present-read-write))
   (run-hooks 'org-present-mode-quit-hook)
+  (org-present-show-cursor)
+  (org-present-show-bars)
+  (org-present-restore-modeline)
   (setq org-present-mode nil))
 
 (defvar org-present-after-navigate-functions nil
@@ -268,16 +276,56 @@
          (current-heading (org-present-trim-string safe-title-text)))
     (run-hook-with-args 'org-present-after-navigate-functions (buffer-name) current-heading)))
 
-(defun org-present-navigation-headline ()
+(defun org-present-headlines ()
+  (mapcar (lambda (x) (plist-get (cadr x) :raw-value)) (cddr (org-element-parse-buffer 'headline))))
+
+
+(defun org-present-navigation-modeline ()
   "Create a navigation headline with org headings of level 1."
-  ;; this might be helpful
-  ;; (org-get-outline-path) yields the local tree structure,
-  ;; where local means every children in the local level 1
-  ;; if on first level it yields nil
-  ;;
-  ;; (org-map-entries function &optional) iterates over all headings
-  ;; and applies function on them
-  )
+  ;; (setq org-present-nav-header (org-present-headlines))
+  (setq org-present-mode-line mode-line-format)
+  (setq mode-line-format (string-join (append '("  ") (org-present-headlines) '("  ")) "  #|#  ")))
+
+(defun org-present-restore-modeline ()
+  "Restore the original modeline format"
+  (interactive)
+  (setq mode-line-format org-present-mode-line))
+
+(defun org-present-hide-bars ()
+  (setq-local org-present-scroll-bar (symbol-value 'scroll-bar-mode))
+  (setq-local org-present-tool-bar (symbol-value 'tool-bar-mode))
+  (setq-local org-present-menu-bar (symbol-value 'menu-bar-mode))
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1))
+
+(defun org-present-show-bars ()
+  (if org-present-scroll-bar
+	  (scroll-bar-mode org-present-scroll-bar))
+  (if org-present-tool-bar
+	  (tool-bar-mode org-present-tool-bar))
+  (if org-present-menu-bar
+	  (menu-bar-mode org-present-menu-bar)))
+
+;; (defun org-present-fullscreen ()
+;; 	(setq-local org-present-fullscreen-restore
+;; 	  (frame-parameter (window-frame) 'fullscreen))
+;; 	(if (not (symbol-value org-present-fullscreen-restore))
+;; 		(toggle-frame-fullscreen)))
+
+;; (defun org-present-fullscreen-restore ()
+;;   (if (not (symbol-value org-present-fullscreen-restore))
+;; 	  (toggle-frame-fullscreen)))
+
+;; (defun org-present-on ()
+;;   (interactive)
+;;   (org-present-fullscreen)
+;;   (org-present-hide-bars))
+
+;; (defun org-present-off ()
+;;   (interactive)
+;;   (org-present-fullscreen-restore)
+;;   (org-present-restore-bars))
 
 (provide 'org-present)
 ;;; org-present.el ends here
