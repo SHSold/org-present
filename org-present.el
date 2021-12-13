@@ -329,3 +329,14 @@
 
 (provide 'org-present)
 ;;; org-present.el ends here
+
+;;
+;; USE HEADER-LINE AS NAVIGATION OVERVIEW
+;; ALSO YOU CAN SET THE TEXT PROPERTIES,
+;; SEE BELOW
+
+(let ((s "Topic 1 #||# Topic 2 #||# Topic"))
+  (put-text-property 0 7 'face 'bold s)
+  (add-face-text-property 0 7 '(:foreground "white") nil s)
+  (add-face-text-property 0 (length s) '(:height 170) nil s)
+  (setq header-line-format s))
