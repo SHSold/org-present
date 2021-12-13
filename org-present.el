@@ -283,13 +283,12 @@
 (defun org-present-navigation-modeline ()
   "Create a navigation headline with org headings of level 1."
   ;; (setq org-present-nav-header (org-present-headlines))
-  (setq org-present-mode-line mode-line-format)
-  (setq mode-line-format (string-join (append '("  ") (org-present-headlines) '("  ")) "  #|#  ")))
+  (setq org-present-mode-line header-line-format)
+  (setq header-line-format (string-join (append '("  ") (org-present-headlines) '("  ")) "  #|#  ")))
 
 (defun org-present-restore-modeline ()
   "Restore the original modeline format"
-  (interactive)
-  (setq mode-line-format org-present-mode-line))
+  (setq header-line-format org-present-mode-line))
 
 (defun org-present-hide-bars ()
   (setq-local org-present-scroll-bar (symbol-value 'scroll-bar-mode))
@@ -335,8 +334,45 @@
 ;; ALSO YOU CAN SET THE TEXT PROPERTIES,
 ;; SEE BELOW
 
-(let ((s "Topic 1 #||# Topic 2 #||# Topic"))
-  (put-text-property 0 7 'face 'bold s)
-  (add-face-text-property 0 7 '(:foreground "white") nil s)
-  (add-face-text-property 0 (length s) '(:height 170) nil s)
-  (setq header-line-format s))
+
+
+;; (defun org-present-make-header (s n)
+;;   (put-text-property 0 7 'face 'bold s)
+;;   (add-face-text-property 0 7 '(:foreground "white") nil s)
+;;   (add-face-text-property 0 (length s) '(:height 170) nil s)
+;;   (setq header-line-format s))
+
+;; (org-present-make-header "Topic 1 #|# Topic 2 #|# Topic")
+
+;; (setq head '("Topic 1" "Topic 2" "Topic"))
+
+;; (setq index (number-sequence 1 (length head)))
+
+;; (setq ih (seq-mapn #'(lambda (a b) (cons a b)) index head))
+
+
+;; (setq header-line-format nil)
+;; (print org-present-mode-line)
+;; ()
+
+
+;; (org-next-visible-heading)
+
+;; (setq head (cdr (cdr (org-element-parse-buffer 'headline nil))))
+
+
+;; (setq head1 (car head))
+;; (setq head2 (cadr head))
+
+;; (length (cdr head1))
+;; (length (cdr head2))
+;; (print head2)
+
+;; (length head)
+;; (cadr (nth 1 head))
+;; (plist-get (cadr (nth 1 head)) :raw-value)
+;; (plist-get (cadr (caddr (nth 1 head))) :raw-value)
+
+;; (nth 0 (cddr (nth 1 head)))
+
+;; (mapcar #'(lambda (x) (plist-get (cdr x) :raw-value)) (cddr (nth 1 head)))
